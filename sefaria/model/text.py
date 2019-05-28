@@ -2539,9 +2539,9 @@ class Ref(object):
 
         ::
 
-            >>> Ref("Genesis 3").is_range()
+            Ref("Genesis 3").is_range()
             False
-            >>> Ref("Genesis 3-5").is_range()
+            Ref("Genesis 3-5").is_range()
             True
 
         :return bool:
@@ -2563,13 +2563,13 @@ class Ref(object):
 
         ::
 
-            >>> Ref("Leviticus 15:3 - 17:12").range_index()
+            Ref("Leviticus 15:3 - 17:12").range_index()
             0
-            >>> Ref("Leviticus 15-17").range_index()
+            Ref("Leviticus 15-17").range_index()
             0
-            >>> Ref("Leviticus 15:17-21").range_index()
+            Ref("Leviticus 15:17-21").range_index()
             1
-            >>> Ref("Leviticus 15:17").range_index()
+            Ref("Leviticus 15:17").range_index()
             2
 
         :return int:
@@ -2584,13 +2584,13 @@ class Ref(object):
 
         ::
 
-            >>> Ref("Leviticus 15:3 - 17:12").range_depth()
+            Ref("Leviticus 15:3 - 17:12").range_depth()
             2
-            >>> Ref("Leviticus 15-17").range_depth()
+            Ref("Leviticus 15-17").range_depth()
             2
-            >>> Ref("Leviticus 15:17-21").range_depth()
+            Ref("Leviticus 15:17-21").range_depth()
             1
-            >>> Ref("Leviticus 15:17").range_depth()
+            Ref("Leviticus 15:17").range_depth()
             0
 
         :return int:
@@ -2638,13 +2638,13 @@ class Ref(object):
 
         ::
 
-            >>> Ref("Shabbat 13a-b").is_spanning()
+            Ref("Shabbat 13a-b").is_spanning()
             True
-            >>> Ref("Shabbat 13a:3-14").is_spanning()
+            Ref("Shabbat 13a:3-14").is_spanning()
             False
-            >>> Ref("Job 4:3-5:3").is_spanning()
+            Ref("Job 4:3-5:3").is_spanning()
             True
-            >>> Ref("Job 4:5-18").is_spanning()
+            Ref("Job 4:5-18").is_spanning()
             False
 
         """
@@ -2656,13 +2656,13 @@ class Ref(object):
 
         ::
 
-            >>> Ref("Leviticus 15:3 - 17:12").span_size()
+            Ref("Leviticus 15:3 - 17:12").span_size()
             3
-            >>> Ref("Leviticus 15-17").span_size()
+            Ref("Leviticus 15-17").span_size()
             3
-            >>> Ref("Leviticus 15:17-21").span_size()
+            Ref("Leviticus 15:17-21").span_size()
             1
-            >>> Ref("Leviticus 15:17").span_size()
+            Ref("Leviticus 15:17").span_size()
             1
 
         :return int:
@@ -2693,13 +2693,13 @@ class Ref(object):
 
         ::
 
-            >>> Ref("Leviticus").is_book_level()
+            Ref("Leviticus").is_book_level()
             True
-            >>> Ref("Leviticus 15").is_book_level()
+            Ref("Leviticus 15").is_book_level()
             False
-            >>> Ref("Rashi on Leviticus").is_book_level()
+            Ref("Rashi on Leviticus").is_book_level()
             True
-            >>> Ref("Rashi on Leviticus 15").is_book_level()
+            Ref("Rashi on Leviticus 15").is_book_level()
             False
 
         :return bool:

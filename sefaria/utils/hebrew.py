@@ -99,11 +99,11 @@ def heb_string_to_int(n):
 	Takes a single thousands block of Hebrew characters, and returns the integer value of
 	that set of characters, ignoring thousands order of magnitude.
 
-	>>> heb_string_to_int(u'\u05ea\u05e9\u05e1\u05d3') # = u'תשסד'
+	heb_string_to_int(u'\u05ea\u05e9\u05e1\u05d3') # = u'תשסד'
 	764
 	'''
 
-	n = re.sub(u'[\u05F4"]', '', n)  # remove gershayim
+	n = re.sub(u'[\u05F4"\u05F3]', '', n)  # remove gershayim
 	return sum(map(heb_to_int, n))
 
 
@@ -111,7 +111,7 @@ def decode_hebrew_numeral(n):
 	"""
 	Takes any string representing a Hebrew numeral and returns it integer value.
 
-	>>> decode_hebrew_numeral(u'ה׳תשס״ד')
+	decode_hebrew_numeral(u'ה׳תשס״ד')
 	5764
 	"""
 
