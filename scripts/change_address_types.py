@@ -1,6 +1,10 @@
 # encoding=utf-8
+import django
+django.setup()
+
 from sefaria.model import *
 from sefaria.helper.schema import change_node_structure
+import regex as re
 
 def change_mishneh_torah():
     '''
@@ -26,7 +30,8 @@ def change_sa():
     :return:
     '''
 
-    SA_ind = [u'Shulchan Arukh, Choshen Mishpat', u'Shulchan Arukh, Even HaEzer', u'Shulchan Arukh, Orach Chayim']
+    SA_ind = [u'Shulchan Arukh, Choshen Mishpat', u'Shulchan Arukh, Even HaEzer',
+              u'Shulchan Arukh, Orach Chayim', u"Shulchan Arukh, Yoreh De'ah"]
     for title in SA_ind:
         node = library.get_schema_node(title)
         change_node_structure(node, node.sectionNames, address_types=['Siman', 'Seif'])
@@ -42,7 +47,31 @@ def change_tur():
         change_node_structure(tur, tur.sectionNames, address_types=['Siman', 'Seif'])
 
 
+def change_tanakh():
+    '''
+    changes addressTypes of all Tanakh books to ['Perek', 'Pasuk']
+    :return:
+    '''
+
+    tanakh = library.get_indexes_in_category("Tanakh")
+    for book in tanakh:
+        node = library.get_schema_node(book)
+        change_node_structure(node, node.sectionNames, address_types=['Perek', 'Integer']) #'Pasuk'])
+
+
+def change_guide_perplexed():
+    ind = library.get_index(u'Guide for the Perplexed')
+    nodes = ind.schema['nodes']
+    for n in nodes:
+        for ntitle in n['titles']:
+            if ntitle['lang'] == 'he' and re.search(u"'", ntitle['text']) and 'nodeType' in n.keys():
+                n['titles'].append({'text': re.sub(u"'", u"", ntitle['text']), 'lang': 'he',  "primary": "true"})
+                n['titles'].pop(n['titles'].index(ntitle))
+    ind.save()
+
 if __name__ == "__main__":
     change_mishneh_torah()
     change_sa()
     change_tur()
+    change_tanakh()
+    # change_guide_perplexed()
