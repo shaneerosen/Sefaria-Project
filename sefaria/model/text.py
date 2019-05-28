@@ -2143,11 +2143,11 @@ class Ref(object):
 
         ::
 
-            >>> Ref("Genesis 1:3")
-            >>> Ref("Rashi on Genesis 1:3")
-            >>> Ref("Genesis 1:3-2:4")
-            >>> Ref("Shabbat 4b")
-            >>> Ref("Rashi on Shabbat 4b-5a")
+             Ref("Genesis 1:3")
+             Ref("Rashi on Genesis 1:3")
+             Ref("Genesis 1:3-2:4")
+             Ref("Shabbat 4b")
+             Ref("Rashi on Shabbat 4b-5a")
     """
     __metaclass__ = RefCacheType
 
@@ -2173,6 +2173,8 @@ class Ref(object):
         self.__init_ref_pointer_vars()
 
         if tref:
+            if tref.endswith(":"):
+                tref = tref[0:-1]
             self.orig_tref = self.tref = tref
             self._lang = "he" if is_hebrew(tref, heb_only=True) else "en"
             self.__clean_tref()
@@ -2434,7 +2436,7 @@ class Ref(object):
                     try:
                         self.toSections[i] = self.index_node._addressTypes[i].toNumber(self._lang, range_parts[i - delta])
                     except (ValueError, IndexError):
-                        raise InputError(u"Couldn't understand text sections: '{}'.".format(self.tref))
+                        raise InputError(u"Couldn't understand text sections: '''{}'''.".format(self.tref))
             elif self._lang == "en":
                 if self.index_node.addressTypes[0] == "Talmud":
                     self.__parse_talmud_range(parts[1])
