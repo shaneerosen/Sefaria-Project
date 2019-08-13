@@ -4659,7 +4659,8 @@ class Library(object):
         return IndexSet(q) if full_records else IndexSet(q).distinct("title")
 
     def get_indices_by_collective_title(self, collective_title, full_records=False):
-        q = {'collective_title': collective_title}
+        collective_title_en = Term().load_by_title(collective_title).get_primary_title('en')
+        q = {'collective_title': collective_title_en}
         return IndexSet(q) if full_records else IndexSet(q).distinct("title")
 
     #TODO: add category filtering here or in another method?
