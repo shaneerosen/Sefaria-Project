@@ -4729,18 +4729,36 @@ class Library(object):
                 simple_books = list(map(re.escape, self.citing_title_list(lang)))
             else:
                 simple_books = list(map(re.escape, self.full_title_list(lang, with_terms=with_terms)))
-            simple_book_part = r'|'.join(sorted(simple_books, key=len, reverse=True))  # Match longer titles first
-
+            rambam_book_list = list(map(re.escape,['רמב"ם ' + rt for rt in self.all_rambam_titles_regex(simple_books)[0]]))
+            simple_book_part = '|'.join(sorted(simple_books + rambam_book_list, key=len, reverse=True))  # Match longer titles first
             # re_string += ur'(?:^|[ ([{>,-]+)' if for_js else u''  # Why don't we check for word boundaries internally as well?
             # re_string += ur'(?:\u05d5?(?:\u05d1|\u05de|\u05dc|\u05e9|\u05d8|\u05d8\u05e9)?)' if for_js and lang == "he" else u'' # likewise leading characters in Hebrew?
             # re_string += ur'(' if for_js else
-            re_string = r'(?P<title>'
+            re_string = '(?P<title>'
             re_string += simple_book_part
-            re_string += r')'
-            re_string += r'($|[:., <]+)'
+            re_string += ')'
+            re_string += '($|[:., <]+)'
             self._title_regex_strings[key] = re_string
 
         return re_string
+
+    def all_rambam_titles_regex(self, simple_books=[], lang="he"):
+        rambam_re = re.compile('''(?:רמב"ם|משנה תורה)[,\s]*(?:הלכות|הל'|)\s(?P<full_name>(?P<name_one>.+?)(?:\sו(?P<name_two>.+)|$))''')
+        # list(filter(rambam_re.match, simple_books))
+        full_names = [rambam_re.match(x.replace('\\', '')).group('full_name') for x in simple_books if rambam_re.match(x.replace('\\', ''))]
+        devided_names_one = [rambam_re.match(x.replace('\\', '')).group('name_one') for x in simple_books if rambam_re.match(x.replace('\\', '')) and rambam_re.match(x.replace('\\', '')).group('name_one')]
+        devided_names_two = [rambam_re.match(x.replace('\\', '')).group('name_two') for x in simple_books if rambam_re.match(x.replace('\\', '')) and rambam_re.match(x.replace('\\', '')).group('name_two')]
+        rambam_book_names = list(set(full_names + devided_names_one + devided_names_two))
+        rambam_book_part = r'|רמב"ם '.join(sorted(rambam_book_names, key=len, reverse=True))
+
+        mt = [library.get_index(t) for t in library.get_indexes_in_category('Mishneh Torah')]
+        # rambam_dict = dict([('|'.join([re.match(rambam_re, t).group() for t in ind.all_titles('he')]), ind.get_title('he')) for ind in mt])
+        # [rambam_dict.get(x) for x in rambam_dict.keys() if re.search(title.replace(), x)]
+        full_names = [(re.match(rambam_re, t).group('full_name'), ind.get_title('he')) for ind in mt for t in ind.all_titles('he') if re.match(rambam_re, t) and re.match(rambam_re, t)]
+        devided_names_one = [(re.match(rambam_re, t).group('name_one'), ind.get_title('he')) for ind in mt for t in ind.all_titles('he') if re.match(rambam_re, t) and re.match(rambam_re, t).group('name_one')]
+        devided_names_two = [(re.match(rambam_re, t).group('name_two'), ind.get_title('he')) for ind in mt for t in ind.all_titles('he') if re.match(rambam_re, t) and re.match(rambam_re, t).group('name_two')]
+        rambam_dict = dict(full_names + devided_names_one + devided_names_two)
+        return rambam_book_names, rambam_dict
 
     #WARNING: Do NOT put the compiled re2 object into redis.  It gets corrupted.
     def all_titles_regex(self, lang="en", with_terms=False, citing_only=False):
@@ -5141,7 +5159,13 @@ class Library(object):
         """
         return self._internal_ref_from_string(title, st, lang)
 
-    def _internal_ref_from_string(self, title=None, st=None, lang=None, stIsAnchored=False, return_locations = False):
+    def _internal_ref_from_string(self, title=None, st=None, lang=None, stIsAnchored=False, return_locations = False, rambam_dict={}):
+        if re.search('רמב"ם', title):
+            _, rambam_dict = self.all_rambam_titles_regex()
+            new_title = rambam_dict.get(title.replace('רמב"ם', '').strip())
+            st = st.replace(title, new_title)
+            title = new_title
+
 
         node = self.get_schema_node(title, lang)
         if not isinstance(node, JaggedArrayNode):

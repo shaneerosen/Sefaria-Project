@@ -394,7 +394,7 @@ def add_links_from_text(oref, lang, text, text_id, user, **kwargs):
         else:
             citing_only = True
 
-        refs = library.get_refs_in_string(text, lang, citing_only=citing_only)
+        refs = library.get_refs_in_string(text, lang) #, citing_only=citing_only)
 
         for linked_oref in refs:
             link = {
