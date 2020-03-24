@@ -5050,7 +5050,18 @@ class Library(object):
         from sefaria.utils.hebrew import strip_nikkud
         #st = strip_nikkud(st) doing this causes the final result to lose vowels and cantiallation
         unique_titles = set(self.get_titles_in_string(st, lang, citing_only))
-        title_nodes = {title: self.get_schema_node(title,lang) for title in unique_titles}
+        title_nodes = {}
+        new_unique_titles = []
+        for title in unique_titles:
+            if re.search('(רמב"ם|משנה תורה)', title) and not self.get_schema_node(title, lang):
+                _, rambam_dict = self.all_rambam_titles_regex()
+                new_title = rambam_dict.get(title.replace('רמב"ם', '').replace('משנה תורה', '').strip())
+                new_unique_titles.append(new_title)
+                st = st.replace(title, new_title)
+                title = new_title
+            title_nodes[title] = self.get_schema_node(title, lang)
+        unique_titles = new_unique_titles
+        # title_nodes = {title: self.get_schema_node(title,lang) for title in unique_titles}
 
         all_reg = self.get_multi_title_regex_string(unique_titles, lang)
         reg = regex.compile(all_reg, regex.VERBOSE)
