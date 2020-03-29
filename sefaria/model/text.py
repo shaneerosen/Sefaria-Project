@@ -4767,11 +4767,14 @@ class Library(object):
                     add_list.append((k.replace(word, word.replace('ן', 'ם')), v))
         rambam_dict.update(add_list)
         rambam_book_names = rambam_dict.keys()
+        self._generated_to_primary_index_titles['rambam'] = rambam_dict
+        self._full_title_lists['rambam'] = rambam_book_names
         return rambam_book_names, rambam_dict
 
     def ramabam_alt_title_list(self):
-        rambam = list(map(re.escape, ['רמב"ם ' + rt for rt in self.all_rambam_titles_regex()[0]]))
-        mt = list(map(re.escape, ['משנה תורה ' + rt for rt in self.all_rambam_titles_regex()[0]]))
+        rambam_books = self.all_rambam_titles_regex()[0]
+        rambam = list(map(re.escape, ['רמב"ם ' + rt for rt in rambam_books]))
+        mt = list(map(re.escape, ['משנה תורה ' + rt for rt in rambam_books]))
         rambam_book_list = rambam + mt
         return rambam_book_list
 
@@ -5192,7 +5195,12 @@ class Library(object):
 
     def _internal_ref_from_string(self, title=None, st=None, lang=None, stIsAnchored=False, return_locations = False, rambam_dict={}):
         if re.search('(רמב"ם|משנה תורה)', title) and not self.get_schema_node(title, lang):
-            _, rambam_dict = self.all_rambam_titles_regex()
+            # _, rambam_dict = self.all_rambam_titles_regex()
+
+            rambam_dict = self._generated_to_primary_index_titles.get('rambam', [])
+            if not rambam_dict:
+                _, rambam_dict = self.all_rambam_titles_regex()
+                self._generated_to_primary_index_titles['rambam'] = rambam_dict
             new_title = rambam_dict.get(title.replace('רמב"ם', '').replace('משנה תורה', '').strip())
             st = st.replace(title, new_title)
             title = new_title
