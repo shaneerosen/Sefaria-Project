@@ -5054,6 +5054,7 @@ class Library(object):
         title_nodes = {}
         new_unique_titles = []
         rambam_dict = self._generated_to_primary_index_titles.get('rambam', [])
+        pairs = {}
         for title in unique_titles:
             if re.search('(רמב"ם|משנה תורה)', title) and not self.get_schema_node(title, lang):
                 if not rambam_dict:
@@ -5061,24 +5062,25 @@ class Library(object):
                     self._generated_to_primary_index_titles['rambam'] = rambam_dict
                 new_title = rambam_dict.get(title.replace('רמב"ם', '').replace('משנה תורה', '').strip())
                 new_unique_titles.append(new_title)
-                st = st.replace(title, new_title)
-                title = new_title
+                # st = st.replace(title, new_title)
+                pairs[title] = new_title
             else:
+                pairs[title] = title
                 new_unique_titles.append(title)
-            title_nodes[title] = self.get_schema_node(title, lang)
-        unique_titles = new_unique_titles if new_unique_titles else unique_titles
+            title_nodes[title] = self.get_schema_node(pairs[title], lang)
+        # unique_titles = new_unique_titles if new_unique_titles else unique_titles
         # title_nodes = {title: self.get_schema_node(title,lang) for title in unique_titles}
 
-        all_reg = self.get_multi_title_regex_string(unique_titles, lang)
+        all_reg = self.get_multi_title_regex_string(title_nodes, lang)
         reg = regex.compile(all_reg, regex.VERBOSE)
         if all_reg:
             st = self._wrap_all_refs_in_string(title_nodes, reg, st, lang)
         return st
 
-    def get_multi_title_regex_string(self, titles, lang, for_js=False, anchored=False):
+    def get_multi_title_regex_string(self, title_nodes, lang, for_js=False, anchored=False):
         """
         Capture title has to be true.
-        :param titles:
+        :param title_nodes: dictionary, keys: titles values: nodes
         :param lang:
         :param for_js:
         :param anchored:
@@ -5087,9 +5089,9 @@ class Library(object):
         nodes_by_address_type = defaultdict(list)
         regex_components = []
 
-        for title in titles:
+        for title, node in title_nodes.items():
             try:
-                node = self.get_schema_node(title, lang)
+                # node = self.get_schema_node(title, lang)
                 nodes_by_address_type[tuple(node.addressTypes)] += [(title, node)]
             except AttributeError as e:
                 # This chatter fills up the logs:
@@ -5170,7 +5172,9 @@ class Library(object):
             while len(toSections) < len(sections):
                 toSections.append(sections[len(sections) - len(toSections) - 1])
             toSections.reverse()
-
+        if gs.get('title', None):
+            fixed_ref = Ref(ref_match.group().replace(gs['title'],[t['text'] for t in node.title_group.titles if t['lang'] == lang][0]))
+            return fixed_ref
         return Ref(ref_match.group())
 
     def _build_ref_from_string(self, title=None, st=None, lang="en"):
