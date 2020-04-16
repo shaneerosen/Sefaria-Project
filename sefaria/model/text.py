@@ -2005,7 +2005,7 @@ class TextFamily(object):
                 from . import LinkSet
                 query = oref.ref_regex_query()
                 query.update({"generated_by": "add_links_from_text"})  # , "source_text_oid": {"$in": c.version_ids()}
-                if LinkSet(query).count() > 0:
+                if LinkSet(query).count() > 0:  # or re.search('Peninei Halakhah', c._versions[0].title):
                     text_modification_funcs += [lambda s: library.get_wrapped_refs_string(s, lang=language, citing_only=True)]
             setattr(self, self.text_attr_map[language], c._get_text_after_modifications(text_modification_funcs))
 
