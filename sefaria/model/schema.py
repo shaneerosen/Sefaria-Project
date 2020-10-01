@@ -56,6 +56,7 @@ class TitleGroup(object):
             if not self.primary_title(lang):
                 raise InputError("Title Group must have a {} primary title".format(lang))
         if len(self.all_titles()) > len(list(set(self.all_titles()))):
+            # note: primary title is allowed to be duplicated in the way that the same title with and without the primary tag appears
             raise InputError("There are duplicate titles in this object's title group")
         for title in self.titles:
             if not set(title.keys()) == set(self.required_attrs) and not set(title.keys()) <= set(self.required_attrs+self.optional_attrs):
@@ -99,7 +100,7 @@ class TitleGroup(object):
         :return: The primary title string or None
         """
         if not self._primary_title.get(lang):
-            for t in self.titles:
+            for t in self._titles:
                 if t.get("lang") == lang and t.get("primary"):
                     self._primary_title[lang] = t.get("text")
                     break
@@ -127,8 +128,17 @@ class TitleGroup(object):
         :return: list of strings - the titles of this node
         """
         if lang is None:
-            return [t["text"] for t in self.titles]
-        return [t["text"] for t in self.titles if t["lang"] == lang]
+            titles_no_primary = [t["text"] for t in self._titles if not t.get('primary', False)]
+            titles_primary = [t["text"] for t in self._titles if t.get('primary', False)]
+            primary_not_in_titles = set(titles_primary).difference(set(titles_primary))
+            all_titles_list = titles_no_primary + list(primary_not_in_titles)
+        else:
+            titles_no_primary = [t["text"] for t in self._titles if not t.get('primary', False) and t['lang'] == lang]
+            titles_primary = [t["text"] for t in self._titles if t.get('primary', False) and t['lang'] == lang]
+            primary_not_in_titles = set(titles_primary).difference(set(titles_no_primary))
+            all_titles_list = titles_no_primary + list(primary_not_in_titles)
+        return all_titles_list
+
 
     def secondary_titles(self, lang=None):
         if lang is None:
@@ -152,7 +162,7 @@ class TitleGroup(object):
             "both" - this node is addressable both in a combined and a alone form.
         :return: the object
         """
-        if any([t for t in self.titles if t["text"] == text and t["lang"] == lang]):  #already there
+        if any([t for t in self._titles if t["text"] == text and t["lang"] == lang]):  #already there
             if not replace_primary:
                 return
             else:  # update this title as primary: remove it, then re-add below
