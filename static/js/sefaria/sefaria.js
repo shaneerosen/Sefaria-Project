@@ -2234,6 +2234,8 @@ Sefaria = extend(Sefaria, {
       "מחיקת דף מקורות היא פעולה בלתי הפיכה. האם אתם בטוחים?",
       "Unfortunately an error has occurred. If you've recently edited text on this page, you may want to copy your recent work out of this page and click reload to ensure your work is properly saved.":
       "לצערנו ארעה שגיאה. אם ערכתם לאחרונה את הדף הנוכחי, ייתכן ותרצו להעתיק את השינויים למקור חיצוני ואז לטעון מחדש את הדף כדי לוודא שהשינויים נשמרו.",
+      "Are you sure you want to remove this?": "בטוח שברצונך למחוק?",
+      "Would you like to save this sheet? You only need to save once, after that changes are saved automatically.": "רוצה לשמור את הדף הזה? כל שעליך לעשות הוא לשמור פעם אחת – לאחר מכן השינויים יישמרו באופן אוטומטי.",
       //"Untitled Source Sheet": "דף מקורות ללא שם",
       "Like": "אהבתי",
       "Unlike": "ביטול סימון אהבתי",
@@ -2377,7 +2379,12 @@ Sefaria = extend(Sefaria, {
       "Sheets Read" : "דפי מקורות שנקראו",
       "Sheets Created" : "דפי מקורות שנוצרו",
       "Average Sefaria User" : "משתמש ממוצע בספריא",
-      "Etc": "שאר"
+      "Etc": "שאר",
+
+      //chavruta
+      "Learn with a Chavruta": "ללמוד עם חברותא",
+      "Share this link with your chavruta to start a video call with this text": "כדי להתחיל שיחת וידאו, שתפו עם החברותא שלכם את הקישור הזה:",
+      "Start Call": "התחלת שיחה"
 
   },
   _v: function(inputVar){

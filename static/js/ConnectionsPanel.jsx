@@ -363,7 +363,7 @@ class ConnectionsPanel extends Component {
         const chevrutaURL = `${window.location.host}/chavruta?ref=${window.location.pathname.replace(/\//, '')}&rid=${uuid}`
 
         content = (<div className="chavruta">
-                    <div className="headerText">Learn with a Chavruta</div>
+                    <div className="headerText">{Sefaria._("Learn with a Chavruta")}</div>
 
                     <div className="fakeBrowser">
                       <div className="fakeBrowserHeader">
@@ -395,7 +395,7 @@ class ConnectionsPanel extends Component {
                         </div>
                       </div>
                     </div>
-                    <p>Share this link with your chavruta to start a video call with this text</p>
+                    <p>{Sefaria._("Share this link with your chavruta to start a video call with this text")}</p>
                     <p>
                     <input
                       id="chavrutaURL"
@@ -406,7 +406,7 @@ class ConnectionsPanel extends Component {
                     </p>
 
                     <p>
-                    <a className="button fillWidth startChavrutaButton" href={"//"+chevrutaURL}><img src="/static/img/video.svg" />Start Call</a>
+                    <a className="button fillWidth startChavrutaButton" href={"//"+chevrutaURL}><img src="/static/img/video.svg" />{Sefaria._("Start Call")}</a>
                     </p>
                   </div>);
 
@@ -627,9 +627,7 @@ class ResourcesList extends Component {
               <ToolsButton en="Notes" he="הערות" image="tools-write-note.svg" count={this.props.notesCount} onClick={() => !Sefaria._uid ? this.props.toggleSignUpModal() : this.props.setConnectionsMode("Notes")} />
               <ToolsButton en="About" he="אודות" image="book-64.png" onClick={() => this.props.setConnectionsMode("About")} />
               <ToolsButton en="Dictionaries" he="מילונים" image="book-2.svg" onClick={() => this.props.setConnectionsMode("Lexicon")} />
-              {/*
               <ToolsButton en="Chavruta" he="חברותא" image="video.svg" onClick={() => !Sefaria._uid ? this.props.toggleSignUpModal() : this.props.setConnectionsMode("Chavruta")} />
-              */}
               <ToolsButton en="Tools" he="כלים" icon="gear" onClick={() => this.props.setConnectionsMode("Tools")} />
               <ToolsButton en="Feedback" he="משוב" icon="comment" onClick={() => this.props.setConnectionsMode("Feedback")} />
             </div>);
