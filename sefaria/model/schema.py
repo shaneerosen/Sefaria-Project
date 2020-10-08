@@ -869,7 +869,7 @@ class TitledTreeNode(TreeNode, AbstractTitledOrTermedObject):
             if self.sharedTitle:
                 d["sharedTitle"] = self.sharedTitle
             if not self.sharedTitle or kwargs.get("expand_shared"):
-                d["titles"] = self.get_titles_object()  #                d["titles"] = self.get_db_titles()  #
+                d["titles"] =  d["titles"] = self.get_db_titles()  #  self.get_titles_object()               #
         if kwargs.get("expand_titles"):
             d["title"] = self.title_group.primary_title("en")
             d["heTitle"] = self.title_group.primary_title("he")
